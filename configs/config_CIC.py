@@ -1,0 +1,5 @@
+scenarios_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\datasets\\CIC\\archive\\Edge-IIoTset dataset\\SecureIoT"
+attacks_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\SecureIoT\\NetSentinel\\dataset_wise_results\\CIC\\attacks\\"
+data_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\SecureIoT\\NetSentinel\\dataset_wise_results\\CIC\\data\\"
+experiments_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\SecureIoT\\NetSentinel\\dataset_wise_results\\CIC\\experiments\\"
+log_file_path = "D:\\ACADEMICS\\SEM-10\\ddp\\SecureIoT\\NetSentinel\\dataset_wise_results\\CIC\\logs\\"

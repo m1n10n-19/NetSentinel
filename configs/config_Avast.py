@@ -1,0 +1,5 @@
+scenarios_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\datasets\\Avast\\archive\\Edge-IIoTset dataset\\SecureIoT"
+attacks_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\SecureIoT\\NetSentinel\\dataset_wise_results\\Avast\\attacks\\"
+data_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\SecureIoT\\NetSentinel\\dataset_wise_results\\Avast\\data\\"
+experiments_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\SecureIoT\\NetSentinel\\dataset_wise_results\\Avast\\experiments\\"
+log_file_path = "D:\\ACADEMICS\\SEM-10\\ddp\\SecureIoT\\NetSentinel\\dataset_wise_results\\Avast\\logs\\"
