@@ -1,4 +1,4 @@
-scenarios_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\datasets\\IoT_ID\\archive\\Edge-IIoTset dataset\\SecureIoT"
+scenarios_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\datasets\\IoT_ID\\IoT_ID_extracted_clean\\"
 attacks_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\SecureIoT\\NetSentinel\\dataset_wise_results\\IoT_ID\\attacks\\"
 data_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\SecureIoT\\NetSentinel\\dataset_wise_results\\IoT_ID\\data\\"
 experiments_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\SecureIoT\\NetSentinel\\dataset_wise_results\\IoT_ID\\experiments\\"

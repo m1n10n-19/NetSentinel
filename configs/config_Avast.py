@@ -1,4 +1,4 @@
-scenarios_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\datasets\\Avast\\archive\\Edge-IIoTset dataset\\SecureIoT"
+scenarios_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\datasets\\Avast\\iot_23_datasets_full\\opt\\Malware-Project\\BigDataset\\IoTScenarios\\"
 attacks_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\SecureIoT\\NetSentinel\\dataset_wise_results\\Avast\\attacks\\"
 data_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\SecureIoT\\NetSentinel\\dataset_wise_results\\Avast\\data\\"
 experiments_dir = "D:\\ACADEMICS\\SEM-10\\ddp\\SecureIoT\\NetSentinel\\dataset_wise_results\\Avast\\experiments\\"
