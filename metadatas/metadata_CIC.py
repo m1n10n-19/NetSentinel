@@ -2,14 +2,19 @@
 # mixed classes 
 # only one folder
 # dropped all rows containing nan value in label
+# added new column Binmary_label
 
 import re
 
-column_index = 46
 
-iot23_metadata = {
-    "file_name_pattern": "/**/*.csv",
-    "file_header": "",
+data_metadata = {
+    "file_name_pattern":"*.csv",
+    "file_header": "flow_duration,Header_Length,Protocol Type,Duration,Rate,Srate,"
+                    "Drate,fin_flag_number,syn_flag_number,rst_flag_number,psh_flag_number,"
+                    "ack_flag_number,ece_flag_number,cwr_flag_number,ack_count,syn_count,"
+                    "fin_count,urg_count,rst_count,HTTP,HTTPS,DNS,Telnet,SMTP,SSH,IRC,"
+                    "TCP,UDP,DHCP,ARP,ICMP,IPv,LLC,Tot sum,Min,Max,AVG,Std,Tot size,"
+                    "IAT,Number,Magnitue,Radius,Covariance,Variance,Weight,label,Binary_label",
     "all_columns": ['flow_duration', 'Header_Length', 'Protocol Type', 'Duration', 
                     'Rate', 'Srate', 'Drate', 'fin_flag_number', 'syn_flag_number', 
                     'rst_flag_number', 'psh_flag_number', 'ack_flag_number', 
@@ -18,7 +23,7 @@ iot23_metadata = {
                     'Telnet', 'SMTP', 'SSH', 'IRC', 'TCP', 'UDP', 'DHCP', 'ARP', 
                     'ICMP', 'IPv', 'LLC', 'Tot sum', 'Min', 'Max', 'AVG', 'Std', 
                     'Tot size', 'IAT', 'Number', 'Magnitue', 'Radius', 'Covariance', 
-                    'Variance', 'Weight', 'label'],
+                    'Variance', 'Weight', 'label', 'Binary_label'],
 
     "numeric_columns": ['flow_duration', 'Header_Length', 'Protocol Type', 
                         'Duration', 'Rate', 'Srate', 'Drate', 'fin_flag_number', 
@@ -29,13 +34,14 @@ iot23_metadata = {
                         'SSH', 'IRC', 'TCP', 'UDP', 'DHCP', 'ARP', 'ICMP', 'IPv', 
                         'LLC', 'Tot sum', 'Min', 'Max', 'AVG', 'Std', 'Tot size', 
                         'IAT', 'Number', 'Magnitue', 'Radius', 'Covariance', 
-                        'Variance', 'Weight'],
+                        'Variance', 'Weight', 'Binary_label'],
+    "column_index": 46 #column index of label
 
 }
 
 data_cleanup = {
     "classification_col": "label",
-    "drop_cols": ['label'],
+    "drop_cols": ['Binary_label'],
     "replace_values": {},
     "replace_values_in_col": {},
     "transform_to_numeric": ['flow_duration', 'Header_Length', 'Protocol Type', 
@@ -47,11 +53,11 @@ data_cleanup = {
                         'SSH', 'IRC', 'TCP', 'UDP', 'DHCP', 'ARP', 'ICMP', 'IPv', 
                         'LLC', 'Tot sum', 'Min', 'Max', 'AVG', 'Std', 'Tot size', 
                         'IAT', 'Number', 'Magnitue', 'Radius', 'Covariance', 
-                        'Variance', 'Weight'], 
+                        'Variance', 'Weight', 'Binary_label'], 
     "class_labels": {
-        0: 'DDoS-TCP_Flood', 
+        4: 'DDoS-TCP_Flood', 
         1: 'DoS-UDP_Flood', 2: 'DDoS-ICMP_Fragmentation', 3: 'DDoS-RSTFINFlood', 
-        4: 'BenignTraffic', 5: 'DDoS-SynonymousIP_Flood', 6: 'DDoS-UDP_Flood', 
+        0: 'BenignTraffic', 5: 'DDoS-SynonymousIP_Flood', 6: 'DDoS-UDP_Flood', 
         7: 'DDoS-ICMP_Flood', 8: 'DoS-TCP_Flood', 9: 'DDoS-PSHACK_Flood', 
         10: 'DDoS-SYN_Flood', 11: 'DoS-SYN_Flood', 12: 'MITM-ArpSpoofing', 
         13: 'DDoS-SlowLoris', 14: 'Mirai-greeth_flood', 15: 'Mirai-udpplain', 
@@ -59,23 +65,23 @@ data_cleanup = {
         19: 'DDoS-ACK_Fragmentation', 20: 'Recon-HostDiscovery', 21: 'Recon-PingSweep', 
         22: 'DNS_Spoofing', 23: 'DoS-HTTP_Flood', 24: 'SqlInjection', 25: 'DictionaryBruteForce', 
         26: 'Backdoor_Malware', 27: 'Recon-OSScan', 28: 'DDoS-HTTP_Flood', 29: 'VulnerabilityScan', 
-        30: 'BrowserHijacking', 31: 'CommandInjection', 32: 'XSS', 33: 'Uploading_Attack'
+        30: 'BrowserHijacking', 31: 'CommandInjection', 32: 'XSS', 33: 'Uploading_Attack',
 
     },
     "category_encodings": {
         "label": {
-            'DDoS-TCP_Flood': 1, 'DoS-UDP_Flood': 1, 'DDoS-ICMP_Fragmentation': 1, 
-            'DDoS-RSTFINFlood': 1, 'BenignTraffic': 0, 'DDoS-SynonymousIP_Flood': 1, 
-            'DDoS-UDP_Flood': 1, 'DDoS-ICMP_Flood': 1, 'DoS-TCP_Flood': 1, 
-            'DDoS-PSHACK_Flood': 1, 'DDoS-SYN_Flood': 1, 'DoS-SYN_Flood': 1, 
-            'MITM-ArpSpoofing': 1, 'DDoS-SlowLoris': 1, 'Mirai-greeth_flood': 1, 
-            'Mirai-udpplain': 1, 'Recon-PortScan': 1, 'DDoS-UDP_Fragmentation': 1, 
-            'Mirai-greip_flood': 1, 'DDoS-ACK_Fragmentation': 1, 
-            'Recon-HostDiscovery': 1, 'Recon-PingSweep': 1, 'DNS_Spoofing': 1, 
-            'DoS-HTTP_Flood': 1, 'SqlInjection': 1, 'DictionaryBruteForce': 1, 
-            'Backdoor_Malware': 1, 'Recon-OSScan': 1, 'DDoS-HTTP_Flood': 1, 
-            'VulnerabilityScan': 1, 'BrowserHijacking': 1, 'CommandInjection': 1, 
-            'XSS': 1, 'Uploading_Attack': 1,
+            'DDoS-TCP_Flood': 4, 'DoS-UDP_Flood': 1, 'DDoS-ICMP_Fragmentation': 2, 
+            'DDoS-RSTFINFlood': 3, 'BenignTraffic': 0, 'DDoS-SynonymousIP_Flood': 5, 
+            'DDoS-UDP_Flood': 6, 'DDoS-ICMP_Flood': 7, 'DoS-TCP_Flood': 8, 
+            'DDoS-PSHACK_Flood': 9, 'DDoS-SYN_Flood': 10, 'DoS-SYN_Flood': 11, 
+            'MITM-ArpSpoofing': 12, 'DDoS-SlowLoris': 13, 'Mirai-greeth_flood': 14, 
+            'Mirai-udpplain': 15, 'Recon-PortScan': 16, 'DDoS-UDP_Fragmentation': 17, 
+            'Mirai-greip_flood': 18, 'DDoS-ACK_Fragmentation': 19, 
+            'Recon-HostDiscovery': 20, 'Recon-PingSweep': 21, 'DNS_Spoofing': 22, 
+            'DoS-HTTP_Flood': 23, 'SqlInjection': 24, 'DictionaryBruteForce': 25, 
+            'Backdoor_Malware': 26, 'Recon-OSScan': 27, 'DDoS-HTTP_Flood': 28, 
+            'VulnerabilityScan': 29, 'BrowserHijacking': 30, 'CommandInjection': 31, 
+            'XSS': 32, 'Uploading_Attack': 33,
         },
     },
 }
@@ -95,7 +101,8 @@ feature_selections = {
                         'SSH', 'IRC', 'TCP', 'UDP', 'DHCP', 'ARP', 'ICMP', 'IPv', 
                         'LLC', 'Tot sum', 'Min', 'Max', 'AVG', 'Std', 'Tot size', 
                         'IAT', 'Number', 'Magnitue', 'Radius', 'Covariance', 
-                        'Variance', 'Weight']
+                        'Variance', 'Weight', 'label',
+                        ]
         },
 
     # EXP_FL16_FT17_R_ / EXP_FL4_FT17_R_
@@ -103,16 +110,7 @@ feature_selections = {
     # 'label'
     "F17": {
         "description": 'F17',
-        "features": ['flow_duration', 'Header_Length', 'Protocol Type', 
-                        'Duration', 'Rate', 'Srate', 'Drate', 'fin_flag_number', 
-                        'syn_flag_number', 'rst_flag_number', 'psh_flag_number', 
-                        'ack_flag_number', 'ece_flag_number', 'cwr_flag_number', 
-                        'ack_count', 'syn_count', 'fin_count', 'urg_count', 
-                        'rst_count', 'HTTP', 'HTTPS', 'DNS', 'Telnet', 'SMTP', 
-                        'SSH', 'IRC', 'TCP', 'UDP', 'DHCP', 'ARP', 'ICMP', 'IPv', 
-                        'LLC', 'Tot sum', 'Min', 'Max', 'AVG', 'Std', 'Tot size', 
-                        'IAT', 'Number', 'Magnitue', 'Radius', 'Covariance', 
-                        'Variance', 'Weight']
+        "features": []
         },
 
     # EXP_FL16_FT18_R_ / EXP_FL4_FT18_R_
@@ -152,10 +150,10 @@ feature_selections = {
 datasets = {
     'S16': [],
     'S04': [
-        "SqlInjection.csv",
-        "DictionaryBruteForce.csv",
+        "DDoS-ICMP_Flood.csv",
+        "DDoS-TCP_Flood.csv",
         "BenignTraffic.csv",
-        "XSS.csv",
+        "DoS-UDP_Flood.csv",
     ]
 }
 
