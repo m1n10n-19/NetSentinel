@@ -10,6 +10,7 @@ from os import walk
 import json
 
 from src.helpers.log_helper import log_duration
+from src.metadata import data_metadata
 
 
 def mk_dir(dir_path):
@@ -92,8 +93,8 @@ def split_files_by_value_in_col(dataset_location,
                                 file_name_pattern,
                                 output_dir,
                                 header_line,
-                                column_index=22,
-                                sep='\s+',
+                                column_index=data_metadata["column_index"],
+                                sep=data_metadata["sep"],
                                 max_size_in_mb=None):
     logging.info("--> Start splitting file . . . ")
     start_time = time.time()

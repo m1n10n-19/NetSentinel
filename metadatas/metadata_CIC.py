@@ -35,8 +35,8 @@ data_metadata = {
                         'LLC', 'Tot sum', 'Min', 'Max', 'AVG', 'Std', 'Tot size', 
                         'IAT', 'Number', 'Magnitue', 'Radius', 'Covariance', 
                         'Variance', 'Weight', 'Binary_label'],
-    "column_index": 46 #column index of label
-
+    "column_index": 46, #column index of label
+    "sep": ',', #seperater for csv
 }
 
 data_cleanup = {

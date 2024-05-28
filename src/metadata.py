@@ -1,87 +1,160 @@
-# .csv files
-# mixed classes 
-# only one folder
-# dropped all rows containing nan value in label
-# added new column Binmary_label
+# .log.labeled files
+# different attacks in same file
+# device wise capture
 
 import re
 
 
+
 data_metadata = {
-    "file_name_pattern":"*.csv",
-    "file_header": "flow_duration,Header_Length,Protocol Type,Duration,Rate,Srate,"
-                    "Drate,fin_flag_number,syn_flag_number,rst_flag_number,psh_flag_number,"
-                    "ack_flag_number,ece_flag_number,cwr_flag_number,ack_count,syn_count,"
-                    "fin_count,urg_count,rst_count,HTTP,HTTPS,DNS,Telnet,SMTP,SSH,IRC,"
-                    "TCP,UDP,DHCP,ARP,ICMP,IPv,LLC,Tot sum,Min,Max,AVG,Std,Tot size,"
-                    "IAT,Number,Magnitue,Radius,Covariance,Variance,Weight,label,Binary_label",
-    "all_columns": ['flow_duration', 'Header_Length', 'Protocol Type', 'Duration', 
-                    'Rate', 'Srate', 'Drate', 'fin_flag_number', 'syn_flag_number', 
-                    'rst_flag_number', 'psh_flag_number', 'ack_flag_number', 
-                    'ece_flag_number', 'cwr_flag_number', 'ack_count', 'syn_count', 
-                    'fin_count', 'urg_count', 'rst_count', 'HTTP', 'HTTPS', 'DNS', 
-                    'Telnet', 'SMTP', 'SSH', 'IRC', 'TCP', 'UDP', 'DHCP', 'ARP', 
-                    'ICMP', 'IPv', 'LLC', 'Tot sum', 'Min', 'Max', 'AVG', 'Std', 
-                    'Tot size', 'IAT', 'Number', 'Magnitue', 'Radius', 'Covariance', 
-                    'Variance', 'Weight', 'label', 'Binary_label'],
-
-    "numeric_columns": ['flow_duration', 'Header_Length', 'Protocol Type', 
-                        'Duration', 'Rate', 'Srate', 'Drate', 'fin_flag_number', 
-                        'syn_flag_number', 'rst_flag_number', 'psh_flag_number', 
-                        'ack_flag_number', 'ece_flag_number', 'cwr_flag_number', 
-                        'ack_count', 'syn_count', 'fin_count', 'urg_count', 
-                        'rst_count', 'HTTP', 'HTTPS', 'DNS', 'Telnet', 'SMTP', 
-                        'SSH', 'IRC', 'TCP', 'UDP', 'DHCP', 'ARP', 'ICMP', 'IPv', 
-                        'LLC', 'Tot sum', 'Min', 'Max', 'AVG', 'Std', 'Tot size', 
-                        'IAT', 'Number', 'Magnitue', 'Radius', 'Covariance', 
-                        'Variance', 'Weight', 'Binary_label'],
-    "column_index": 46 #column index of label
-
+    "file_name_pattern": "/**/conn.log.labeled",
+    "file_header": "ts	uid	id.orig_h	id.orig_p	id.resp_h	id.resp_p	"
+                   "proto	service	duration	orig_bytes	resp_bytes	conn_state	"
+                   "local_orig	local_resp	missed_bytes	history	orig_pkts	"
+                   "orig_ip_bytes	resp_pkts	resp_ip_bytes	tunnel_parents	"
+                   "label	detailed-label\n",
+    "all_columns": [
+        'ts', 'uid',
+        'id.orig_h', 'id.orig_p', 'id.resp_h', 'id.resp_p', 'proto',
+        'service', 'duration', 'orig_bytes', 'resp_bytes', 'conn_state',
+        'local_orig', 'local_resp', 'missed_bytes', 'history', 'orig_pkts',
+        'orig_ip_bytes', 'resp_pkts', 'resp_ip_bytes', 'tunnel_parents',
+        'label', 'detailed-label'
+    ],
+    "numeric_columns": ["duration",
+                        "orig_bytes",
+                        "resp_bytes",
+                        "missed_bytes",
+                        "local_orig",
+                        "local_resp",
+                        "orig_pkts",
+                        "orig_ip_bytes",
+                        "resp_pkts",
+                        "resp_ip_bytes"],
+    "column_index": 22,
+    "sep": '\s+',
 }
 
 data_cleanup = {
-    "classification_col": "label",
-    "drop_cols": ['Binary_label'],
+    "classification_col": "detailed-label",
+    "drop_cols": ['ts', 'uid', 'label'],
     "replace_values": {},
-    "replace_values_in_col": {},
-    "transform_to_numeric": ['flow_duration', 'Header_Length', 'Protocol Type', 
-                        'Duration', 'Rate', 'Srate', 'Drate', 'fin_flag_number', 
-                        'syn_flag_number', 'rst_flag_number', 'psh_flag_number', 
-                        'ack_flag_number', 'ece_flag_number', 'cwr_flag_number', 
-                        'ack_count', 'syn_count', 'fin_count', 'urg_count', 
-                        'rst_count', 'HTTP', 'HTTPS', 'DNS', 'Telnet', 'SMTP', 
-                        'SSH', 'IRC', 'TCP', 'UDP', 'DHCP', 'ARP', 'ICMP', 'IPv', 
-                        'LLC', 'Tot sum', 'Min', 'Max', 'AVG', 'Std', 'Tot size', 
-                        'IAT', 'Number', 'Magnitue', 'Radius', 'Covariance', 
-                        'Variance', 'Weight', 'Binary_label'], 
+    "replace_values_in_col": {
+        "detailed-label": {
+            "-": "Benign"
+        },
+        "duration": {
+            "-": 99
+        },
+        "orig_bytes": {
+            "-": 99
+        },
+        "resp_bytes": {
+            "-": 99
+        },
+        "missed_bytes": {
+            "-": 99
+        },
+        "local_orig": {
+            "-": 99
+        },
+        "local_resp": {
+            "-": 99
+        },
+        "orig_pkts": {
+            "-": 99
+        },
+        "orig_ip_bytes": {
+            "-": 99
+        },
+        "resp_pkts": {
+            "-": 99
+        },
+        "resp_ip_bytes": {
+            "-": 99
+        },
+    },
+    "transform_to_numeric": [
+        "duration",
+        "orig_bytes",
+        "resp_bytes",
+        "missed_bytes",
+        "local_orig",
+        "local_resp",
+        "orig_pkts",
+        "orig_ip_bytes",
+        "resp_pkts",
+        "resp_ip_bytes"
+    ],
     "class_labels": {
-        4: 'DDoS-TCP_Flood', 
-        1: 'DoS-UDP_Flood', 2: 'DDoS-ICMP_Fragmentation', 3: 'DDoS-RSTFINFlood', 
-        0: 'BenignTraffic', 5: 'DDoS-SynonymousIP_Flood', 6: 'DDoS-UDP_Flood', 
-        7: 'DDoS-ICMP_Flood', 8: 'DoS-TCP_Flood', 9: 'DDoS-PSHACK_Flood', 
-        10: 'DDoS-SYN_Flood', 11: 'DoS-SYN_Flood', 12: 'MITM-ArpSpoofing', 
-        13: 'DDoS-SlowLoris', 14: 'Mirai-greeth_flood', 15: 'Mirai-udpplain', 
-        16: 'Recon-PortScan', 17: 'DDoS-UDP_Fragmentation', 18: 'Mirai-greip_flood', 
-        19: 'DDoS-ACK_Fragmentation', 20: 'Recon-HostDiscovery', 21: 'Recon-PingSweep', 
-        22: 'DNS_Spoofing', 23: 'DoS-HTTP_Flood', 24: 'SqlInjection', 25: 'DictionaryBruteForce', 
-        26: 'Backdoor_Malware', 27: 'Recon-OSScan', 28: 'DDoS-HTTP_Flood', 29: 'VulnerabilityScan', 
-        30: 'BrowserHijacking', 31: 'CommandInjection', 32: 'XSS', 33: 'Uploading_Attack',
-
+        0: "Benign",
+        1: "Att",
+        2: "C&C",
+        3: "C&C-FD",
+        4: "C&C-HB",
+        5: "C&C-HB-Att",
+        6: "C&C-HB-FD",
+        7: "C&C-Mirai",
+        8: "C&C-HPS",
+        9: "C&C-Torii",
+        10: "DDoS",
+        11: "FD",
+        12: "Okiru",
+        13: "Okiru-Att",
+        14: "HorizPortSc",
+        15: "HorizPortSc-Att",  
     },
     "category_encodings": {
+        "conn_state": {
+            "S0": 0,
+            "S1": 1,
+            "S2": 2,
+            "S3": 3,
+            "SF": 4,
+            "REJ": 5,
+            "RSTO": 6,
+            "RSTR": 7,
+            "RSTOS0": 8,
+            "RSTRH": 9,
+            "SH": 10,
+            "SHR": 11,
+            "OTH": 12
+        },
+        "detailed-label": {
+            "Benign": 0,
+            "Attack": 1,
+            "C&C": 2,
+            "C&C-FileDownload": 3,
+            "C&C-HeartBeat": 4,
+            "C&C-HeartBeat-Attack": 5,
+            "C&C-HeartBeat-FileDownload": 6,
+            "C&C-Mirai": 7,
+            "C&C-PartOfAHorizontalPortScan": 8,
+            "C&C-Torii": 9,
+            "DDoS": 10,
+            "FileDownload": 11,
+            "Okiru": 12,
+            "Okiru-Attack": 13,
+            "PartOfAHorizontalPortScan": 14,
+            "PartOfAHorizontalPortScan-Attack": 15,
+        },
         "label": {
-            'DDoS-TCP_Flood': 4, 'DoS-UDP_Flood': 1, 'DDoS-ICMP_Fragmentation': 2, 
-            'DDoS-RSTFINFlood': 3, 'BenignTraffic': 0, 'DDoS-SynonymousIP_Flood': 5, 
-            'DDoS-UDP_Flood': 6, 'DDoS-ICMP_Flood': 7, 'DoS-TCP_Flood': 8, 
-            'DDoS-PSHACK_Flood': 9, 'DDoS-SYN_Flood': 10, 'DoS-SYN_Flood': 11, 
-            'MITM-ArpSpoofing': 12, 'DDoS-SlowLoris': 13, 'Mirai-greeth_flood': 14, 
-            'Mirai-udpplain': 15, 'Recon-PortScan': 16, 'DDoS-UDP_Fragmentation': 17, 
-            'Mirai-greip_flood': 18, 'DDoS-ACK_Fragmentation': 19, 
-            'Recon-HostDiscovery': 20, 'Recon-PingSweep': 21, 'DNS_Spoofing': 22, 
-            'DoS-HTTP_Flood': 23, 'SqlInjection': 24, 'DictionaryBruteForce': 25, 
-            'Backdoor_Malware': 26, 'Recon-OSScan': 27, 'DDoS-HTTP_Flood': 28, 
-            'VulnerabilityScan': 29, 'BrowserHijacking': 30, 'CommandInjection': 31, 
-            'XSS': 32, 'Uploading_Attack': 33,
+            "benign": 0,
+            "Malicious": 1
+        },
+        "proto": {
+            "icmp": 0,
+            "tcp": 1,
+            "udp": 2
+        },
+        "service": {
+            "-": 0,
+            "dhcp": 1,
+            "dns": 2,
+            "http": 3,
+            "ssh": 4,
+            "ssl": 5,
+            "irc": 6
         },
     },
 }
@@ -89,71 +162,64 @@ data_cleanup = {
 feature_selections = {
     # EXP_FL16_FT14_R_ / EXP_FL4_FT14_R_
     # All without:
-    # 'label'
+    # 'ts', 'uid', 'label', 'id.orig_h', 'local_orig',
+    # 'local_resp', 'missed_bytes',  'tunnel_parents'
     "F14": {
         "description": 'F14',
-        "features": ['flow_duration', 'Header_Length', 'Protocol Type', 
-                        'Duration', 'Rate', 'Srate', 'Drate', 'fin_flag_number', 
-                        'syn_flag_number', 'rst_flag_number', 'psh_flag_number', 
-                        'ack_flag_number', 'ece_flag_number', 'cwr_flag_number', 
-                        'ack_count', 'syn_count', 'fin_count', 'urg_count', 
-                        'rst_count', 'HTTP', 'HTTPS', 'DNS', 'Telnet', 'SMTP', 
-                        'SSH', 'IRC', 'TCP', 'UDP', 'DHCP', 'ARP', 'ICMP', 'IPv', 
-                        'LLC', 'Tot sum', 'Min', 'Max', 'AVG', 'Std', 'Tot size', 
-                        'IAT', 'Number', 'Magnitue', 'Radius', 'Covariance', 
-                        'Variance', 'Weight', 'label',
-                        ]
-        },
+        "features": [
+            'id.orig_p', 'id.resp_h', 'id.resp_p', 'proto',
+            'service', 'duration', 'orig_bytes', 'resp_bytes', 'conn_state',
+            'history', 'orig_pkts',
+            'orig_ip_bytes', 'resp_pkts', 'resp_ip_bytes',
+            'detailed-label'
+        ]},
 
     # EXP_FL16_FT17_R_ / EXP_FL4_FT17_R_
     # All without:
-    # 'label'
+    # 'ts', 'uid', 'label', 'id.orig_h', 'id.resp_h'
     "F17": {
         "description": 'F17',
-        "features": []
-        },
+        "features": [
+            'id.orig_p', 'id.resp_p', 'proto',
+            'service', 'duration', 'orig_bytes', 'resp_bytes', 'conn_state',
+            'local_orig', 'local_resp', 'missed_bytes', 'history', 'orig_pkts',
+            'orig_ip_bytes', 'resp_pkts', 'resp_ip_bytes', 'tunnel_parents',
+            'detailed-label'
+        ]},
 
     # EXP_FL16_FT18_R_ / EXP_FL4_FT18_R_
     # All without:
-    # 'label'
+    # 'ts', 'uid', 'label', 'id.orig_h'
     "F18": {
         "description": 'F18',
-        "features": ['flow_duration', 'Header_Length', 'Protocol Type', 
-                        'Duration', 'Rate', 'Srate', 'Drate', 'fin_flag_number', 
-                        'syn_flag_number', 'rst_flag_number', 'psh_flag_number', 
-                        'ack_flag_number', 'ece_flag_number', 'cwr_flag_number', 
-                        'ack_count', 'syn_count', 'fin_count', 'urg_count', 
-                        'rst_count', 'HTTP', 'HTTPS', 'DNS', 'Telnet', 'SMTP', 
-                        'SSH', 'IRC', 'TCP', 'UDP', 'DHCP', 'ARP', 'ICMP', 'IPv', 
-                        'LLC', 'Tot sum', 'Min', 'Max', 'AVG', 'Std', 'Tot size', 
-                        'IAT', 'Number', 'Magnitue', 'Radius', 'Covariance', 
-                        'Variance', 'Weight']
-        },
+        "features": [
+            'id.orig_p', 'id.resp_h', 'id.resp_p', 'proto',
+            'service', 'duration', 'orig_bytes', 'resp_bytes', 'conn_state',
+            'local_orig', 'local_resp', 'missed_bytes', 'history', 'orig_pkts',
+            'orig_ip_bytes', 'resp_pkts', 'resp_ip_bytes', 'tunnel_parents',
+            'detailed-label'
+        ]},
 
     # All without:
-    # 'label'
+    # 'ts', 'uid', 'label'
     "F19": {
         "description": 'F19',
-        "features": ['flow_duration', 'Header_Length', 'Protocol Type', 
-                        'Duration', 'Rate', 'Srate', 'Drate', 'fin_flag_number', 
-                        'syn_flag_number', 'rst_flag_number', 'psh_flag_number', 
-                        'ack_flag_number', 'ece_flag_number', 'cwr_flag_number', 
-                        'ack_count', 'syn_count', 'fin_count', 'urg_count', 
-                        'rst_count', 'HTTP', 'HTTPS', 'DNS', 'Telnet', 'SMTP', 
-                        'SSH', 'IRC', 'TCP', 'UDP', 'DHCP', 'ARP', 'ICMP', 'IPv', 
-                        'LLC', 'Tot sum', 'Min', 'Max', 'AVG', 'Std', 'Tot size', 
-                        'IAT', 'Number', 'Magnitue', 'Radius', 'Covariance', 
-                        'Variance', 'Weight']
-        },
+        "features": [
+            'id.orig_h', 'id.orig_p', 'id.resp_h', 'id.resp_p', 'proto',
+            'service', 'duration', 'orig_bytes', 'resp_bytes', 'conn_state',
+            'local_orig', 'local_resp', 'missed_bytes', 'history', 'orig_pkts',
+            'orig_ip_bytes', 'resp_pkts', 'resp_ip_bytes', 'tunnel_parents',
+            'detailed-label'
+        ]},
 }
 
 datasets = {
     'S16': [],
     'S04': [
-        "DDoS-ICMP_Flood.csv",
-        "DDoS-TCP_Flood.csv",
-        "BenignTraffic.csv",
-        "DoS-UDP_Flood.csv",
+        "Benign.csv",
+        "Attack.csv",
+        "C&C.csv",
+        "PartOfAHorizontalPortScan.csv"
     ]
 }
 

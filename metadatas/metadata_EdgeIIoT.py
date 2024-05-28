@@ -57,6 +57,7 @@ data_metadata = {
                         'mbtcp.unit_id', 'Attack_label'],
 
     "column_index": 62, #column index of attack_type
+    "sep": ',', #seperater for csv
 }
 
 data_cleanup = {

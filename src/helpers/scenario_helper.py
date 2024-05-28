@@ -12,7 +12,7 @@ def split_scenarios_by_label(dataset_location,
                              output_dir,
                              header_line,
                              column_index=data_metadata["column_index"],
-                             sep=',',
+                             sep=data_metadata["sep"],
                              max_size_in_mb=None):
     logging.info("--> Start splitting file . . . ")
     start_time = time.time()
