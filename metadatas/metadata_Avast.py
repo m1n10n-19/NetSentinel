@@ -4,9 +4,9 @@
 
 import re
 
-column_index = 22
 
-iot23_metadata = {
+
+data_metadata = {
     "file_name_pattern": "/**/conn.log.labeled",
     "file_header": "ts	uid	id.orig_h	id.orig_p	id.resp_h	id.resp_p	"
                    "proto	service	duration	orig_bytes	resp_bytes	conn_state	"
@@ -31,6 +31,8 @@ iot23_metadata = {
                         "orig_ip_bytes",
                         "resp_pkts",
                         "resp_ip_bytes"],
+    "column_index": 22,
+    "sep": '\s+',
 }
 
 data_cleanup = {
@@ -215,8 +217,8 @@ datasets = {
     'S16': [],
     'S04': [
         "Benign.csv",
-        "DDoS.csv",
-        "Okiru.csv",
+        "Attack.csv",
+        "C&C.csv",
         "PartOfAHorizontalPortScan.csv"
     ]
 }
