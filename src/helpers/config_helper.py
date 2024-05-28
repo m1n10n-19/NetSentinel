@@ -20,8 +20,8 @@ def check_config(scenarios_dir,
         valid_scenarios_content = len(scenario_files) > 0
         if not valid_scenarios_content:
             logging.error("Scenarios dir is empty: " + scenarios_dir +
-                          "\nPlease download IoT23 dataset and copy the content of iot23_small "
-                          "to scenarios_dir or config scenarios_dir to point to iot23_small")
+                          "\nPlease download the dataset and copy the content "
+                          "to scenarios_dir or config scenarios_dir ")
 
     # Validate attack files home_dir
     valid_attack_files_dir = os.path.exists(attack_files_dir)

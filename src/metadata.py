@@ -1,9 +1,6 @@
-# .csv files
-# attack and normal folders
-# different types of attacks labels and normal label
+#EdgeIIoT
 
 import re
-
 
 
 data_metadata = {
@@ -62,7 +59,7 @@ data_metadata = {
 
 data_cleanup = {
     "classification_col": "Attack_type",
-    "drop_cols": ['Attack_label', 'http.file_data', 'mqtt.msg', 'dns.qry.name.len'], #columns (11,51,39) have mixed types and non categorical
+    "drop_cols": ['Attack_label', 'frame.time', 'http.file_data', 'mqtt.msg', 'dns.qry.name.len',], #columns (11,51,39) have mixed types and non categorical
     "replace_values": {},
     "replace_values_in_col": {},
     "transform_to_numeric": ['arp.opcode', 'arp.hw.size', 'icmp.checksum', 
@@ -144,6 +141,31 @@ feature_selections = {
         "features": [
             'arp.opcode', 'arp.hw.size', 'icmp.checksum', 
                         'icmp.seq_le', 'icmp.transmit_timestamp', 
+                        'icmp.unused', 'http.content_length', 
+                        'http.response', 'http.tls_port', 'tcp.ack', 
+                        'tcp.ack_raw', 'tcp.checksum', 'tcp.connection.fin', 
+                        'tcp.connection.rst', 'tcp.connection.syn', 
+                        'tcp.connection.synack', 'tcp.dstport', 'tcp.flags', 
+                        'tcp.flags.ack', 'tcp.len', 'tcp.seq', 'udp.port', 
+                        'udp.stream', 'udp.time_delta', 'dns.qry.name', 
+                        'dns.qry.qu', 'dns.qry.type', 'dns.retransmission', 
+                        'dns.retransmit_request', 'dns.retransmit_request_in', 
+                        'mqtt.conflag.cleansess', 'mqtt.conflags', 
+                        'mqtt.hdrflags', 'mqtt.len', 'mqtt.msg_decoded_as', 
+                        'mqtt.msgtype', 'mqtt.proto_len', 'mqtt.topic_len', 
+                        'mqtt.ver', 'mbtcp.len', 'mbtcp.trans_id', 
+                        'mbtcp.unit_id', 'http.request.method' ,'http.request.version', 
+                        'http.request.full_uri',  'mqtt.protoname', 'mqtt.conack.flags',
+        ]},
+
+    # EXP_FL16_FT17_R_ / EXP_FL4_FT17_R_
+    # All without:
+    # 
+    "F17": {
+        "description": 'F17',
+        "features": [
+            'arp.opcode', 'arp.hw.size', 'icmp.checksum', 
+                        'icmp.seq_le', 'icmp.transmit_timestamp', 
                         'icmp.unused', 'http.content_length', 'http.request.method',
                         'http.response', 'http.tls_port', 'tcp.ack', 
                         'tcp.ack_raw', 'tcp.checksum', 'tcp.connection.fin', 
@@ -158,15 +180,6 @@ feature_selections = {
                         'mqtt.msgtype', 'mqtt.proto_len', 'mqtt.topic_len', 
                         'mqtt.ver', 'mbtcp.len', 'mbtcp.trans_id', 
                         'mbtcp.unit_id', 'Attack_type',
-        ]},
-
-    # EXP_FL16_FT17_R_ / EXP_FL4_FT17_R_
-    # All without:
-    # 
-    "F17": {
-        "description": 'F17',
-        "features": [
-            
         ]},
 
     # EXP_FL16_FT18_R_ / EXP_FL4_FT18_R_
@@ -223,13 +236,14 @@ def get_test_data_path(file_path):
 
 
 def format_line(line, new_sep=','):
-    line = __replace_whitespaces(line, replace_with=new_sep)
+    if new_sep != data_metadata['sep']:
+        line = __replace_old_sep(line, replace_with=new_sep)
     line = line.rstrip(new_sep) + '\n'
     return line
 
 
-def __replace_whitespaces(s, replace_with=','):
-    return re.sub(r"\s+", replace_with, s)
+def __replace_old_sep(s, replace_with=','):
+    return re.sub(data_metadata['sep'], replace_with, s)
 
 
 def get_exp_data_dir(exp_name):

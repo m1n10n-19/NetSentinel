@@ -32,7 +32,7 @@ data_metadata = {
                         "resp_pkts",
                         "resp_ip_bytes"],
     "column_index": 22,
-    "sep": '\s+',
+    "sep": r'\s+',
 }
 
 data_cleanup = {
