@@ -38,11 +38,11 @@ def split_scenarios_by_label(dataset_location,
                     else:
                         output_file = output_dir + value + '.csv'
                         target_file = open(output_file, "a+")
-                        #target_file.write(format_line(header_line))
-                        target_file.write(header_line + '\n')
+                        target_file.write(format_line(header_line))
+                        #target_file.write(header_line + '\n')
                         file_cache[value] = target_file
-                    #target_file.write(format_line(line))
-                    target_file.write(line)
+                    target_file.write(format_line(line))
+                    #target_file.write(line)
         file_end_time = time.time()
         logging.info('End processing file in %s seconds = %s minutes...' % (
             (file_end_time - file_start_time), ((file_end_time - file_start_time) / 60)))

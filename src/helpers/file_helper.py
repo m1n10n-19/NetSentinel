@@ -178,7 +178,6 @@ def get_col_value(line, sep, idx, map_key_values=None):
         map_key_values = {}
 
     cols = re.split(sep, line)
-    #print(cols)
     val = (cols[idx]).strip()
     return map_key_values.get(val, val)
 
