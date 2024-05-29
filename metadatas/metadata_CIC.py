@@ -1,8 +1,4 @@
-# .csv files
-# mixed classes 
-# only one folder
-# dropped all rows containing nan value in label
-# added new column Binmary_label
+#CIC
 
 import re
 
@@ -182,13 +178,14 @@ def get_test_data_path(file_path):
 
 
 def format_line(line, new_sep=','):
-    line = __replace_whitespaces(line, replace_with=new_sep)
+    if new_sep != data_metadata['sep']:
+        line = __replace_old_sep(line, replace_with=new_sep)
     line = line.rstrip(new_sep) + '\n'
     return line
 
 
-def __replace_whitespaces(s, replace_with=','):
-    return re.sub(r"\s+", replace_with, s)
+def __replace_old_sep(s, replace_with=','):
+    return re.sub(data_metadata['sep'], replace_with, s)
 
 
 def get_exp_data_dir(exp_name):
