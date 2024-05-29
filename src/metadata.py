@@ -1,213 +1,222 @@
-#EdgeIIoT
+#Avast
 
 import re
 
 
 data_metadata = {
-    "file_name_pattern": "*.csv",
-    "file_header": "frame.time,ip.src_host,ip.dst_host,arp.dst.proto_ipv4,arp.opcode,arp.hw.size,"
-    "arp.src.proto_ipv4,icmp.checksum,icmp.seq_le,icmp.transmit_timestamp,icmp.unused,"
-    "http.file_data,http.content_length,http.request.uri.query,http.request.method,http.referer,"
-    "http.request.full_uri,http.request.version,http.response,http.tls_port,tcp.ack,tcp.ack_raw,"
-    "tcp.checksum,tcp.connection.fin,tcp.connection.rst,tcp.connection.syn,tcp.connection.synack,"
-    "tcp.dstport,tcp.flags,tcp.flags.ack,tcp.len,tcp.options,tcp.payload,tcp.seq,tcp.srcport,"
-    "udp.port,udp.stream,udp.time_delta,dns.qry.name,dns.qry.name.len,dns.qry.qu,dns.qry.type,"
-    "dns.retransmission,dns.retransmit_request,dns.retransmit_request_in,mqtt.conack.flags,"
-    "mqtt.conflag.cleansess,mqtt.conflags,mqtt.hdrflags,mqtt.len,mqtt.msg_decoded_as,mqtt.msg,"
-    "mqtt.msgtype,mqtt.proto_len,mqtt.protoname,mqtt.topic,mqtt.topic_len,mqtt.ver,mbtcp.len,"
-    "mbtcp.trans_id,mbtcp.unit_id,Attack_label,Attack_type",
-
-    "all_columns": ['frame.time', 'ip.src_host', 'ip.dst_host', 'arp.dst.proto_ipv4', 
-                    'arp.opcode', 'arp.hw.size', 'arp.src.proto_ipv4', 'icmp.checksum', 
-                    'icmp.seq_le', 'icmp.transmit_timestamp', 'icmp.unused', 
-                    'http.file_data', 'http.content_length', 'http.request.uri.query', 
-                    'http.request.method', 'http.referer', 'http.request.full_uri', 
-                    'http.request.version', 'http.response', 'http.tls_port', 
-                    'tcp.ack', 'tcp.ack_raw', 'tcp.checksum', 'tcp.connection.fin', 
-                    'tcp.connection.rst', 'tcp.connection.syn', 'tcp.connection.synack', 
-                    'tcp.dstport', 'tcp.flags', 'tcp.flags.ack', 'tcp.len', 
-                    'tcp.options', 'tcp.payload', 'tcp.seq', 'tcp.srcport', 
-                    'udp.port', 'udp.stream', 'udp.time_delta', 'dns.qry.name', 
-                    'dns.qry.name.len', 'dns.qry.qu', 'dns.qry.type', 
-                    'dns.retransmission', 'dns.retransmit_request', 
-                    'dns.retransmit_request_in', 'mqtt.conack.flags', 
-                    'mqtt.conflag.cleansess', 'mqtt.conflags', 'mqtt.hdrflags', 
-                    'mqtt.len', 'mqtt.msg_decoded_as', 'mqtt.msg', 'mqtt.msgtype', 
-                    'mqtt.proto_len', 'mqtt.protoname', 'mqtt.topic', 'mqtt.topic_len', 
-                    'mqtt.ver', 'mbtcp.len', 'mbtcp.trans_id', 'mbtcp.unit_id', 
-                    'Attack_label', 'Attack_type'],
-    "numeric_columns": ['arp.opcode', 'arp.hw.size', 'icmp.checksum', 
-                        'icmp.seq_le', 'icmp.transmit_timestamp', 
-                        'icmp.unused', 'http.content_length', 
-                        'http.response', 'http.tls_port', 'tcp.ack', 
-                        'tcp.ack_raw', 'tcp.checksum', 'tcp.connection.fin', 
-                        'tcp.connection.rst', 'tcp.connection.syn', 
-                        'tcp.connection.synack', 'tcp.dstport', 'tcp.flags', 
-                        'tcp.flags.ack', 'tcp.len', 'tcp.seq', 'udp.port', 
-                        'udp.stream', 'udp.time_delta', 'dns.qry.name', 
-                        'dns.qry.qu', 'dns.qry.type', 'dns.retransmission', 
-                        'dns.retransmit_request', 'dns.retransmit_request_in', 
-                        'mqtt.conflag.cleansess', 'mqtt.conflags', 
-                        'mqtt.hdrflags', 'mqtt.len', 'mqtt.msg_decoded_as', 
-                        'mqtt.msgtype', 'mqtt.proto_len', 'mqtt.topic_len', 
-                        'mqtt.ver', 'mbtcp.len', 'mbtcp.trans_id', 
-                        'mbtcp.unit_id', 'Attack_label'],
-
-    "column_index": 62, #column index of attack_type
-    "sep": ',', #seperater for csv
+    "file_name_pattern": "/**/conn.log.labeled",
+    "file_header": "ts	uid	id.orig_h	id.orig_p	id.resp_h	id.resp_p	"
+                   "proto	service	duration	orig_bytes	resp_bytes	conn_state	"
+                   "local_orig	local_resp	missed_bytes	history	orig_pkts	"
+                   "orig_ip_bytes	resp_pkts	resp_ip_bytes	tunnel_parents	"
+                   "label	detailed-label\n",
+    "all_columns": [
+        'ts', 'uid',
+        'id.orig_h', 'id.orig_p', 'id.resp_h', 'id.resp_p', 'proto',
+        'service', 'duration', 'orig_bytes', 'resp_bytes', 'conn_state',
+        'local_orig', 'local_resp', 'missed_bytes', 'history', 'orig_pkts',
+        'orig_ip_bytes', 'resp_pkts', 'resp_ip_bytes', 'tunnel_parents',
+        'label', 'detailed-label'
+    ],
+    "numeric_columns": ["duration",
+                        "orig_bytes",
+                        "resp_bytes",
+                        "missed_bytes",
+                        "local_orig",
+                        "local_resp",
+                        "orig_pkts",
+                        "orig_ip_bytes",
+                        "resp_pkts",
+                        "resp_ip_bytes"],
+    "column_index": 22,
+    "sep": r'\s+',
 }
 
 data_cleanup = {
-    "classification_col": "Attack_type",
-    "drop_cols": ['Attack_label', 'frame.time', 'http.file_data', 'mqtt.msg', 'dns.qry.name.len',], #columns (11,51,39) have mixed types and non categorical
+    "classification_col": "detailed-label",
+    "drop_cols": ['ts', 'uid', 'label'],
     "replace_values": {},
-    "replace_values_in_col": {},
-    "transform_to_numeric": ['arp.opcode', 'arp.hw.size', 'icmp.checksum', 
-                'icmp.seq_le', 'icmp.transmit_timestamp', 
-                'icmp.unused', 'http.content_length', 
-                'http.response', 'http.tls_port', 'tcp.ack', 
-                'tcp.ack_raw', 'tcp.checksum', 'tcp.connection.fin', 
-                'tcp.connection.rst', 'tcp.connection.syn', 
-                'tcp.connection.synack', 'tcp.dstport', 'tcp.flags', 
-                'tcp.flags.ack', 'tcp.len', 'tcp.seq', 'udp.port', 
-                'udp.stream', 'udp.time_delta', 'dns.qry.name', 
-                'dns.qry.qu', 'dns.qry.type', 'dns.retransmission', 
-                'dns.retransmit_request', 'dns.retransmit_request_in', 
-                'mqtt.conflag.cleansess', 'mqtt.conflags', 
-                'mqtt.hdrflags', 'mqtt.len', 'mqtt.msg_decoded_as', 
-                'mqtt.msgtype', 'mqtt.proto_len', 'mqtt.topic_len', 
-                'mqtt.ver', 'mbtcp.len', 'mbtcp.trans_id', 
-                'mbtcp.unit_id', 'Attack_label'],
-
+    "replace_values_in_col": {
+        "detailed-label": {
+            "-": "Benign"
+        },
+        "duration": {
+            "-": 99
+        },
+        "orig_bytes": {
+            "-": 99
+        },
+        "resp_bytes": {
+            "-": 99
+        },
+        "missed_bytes": {
+            "-": 99
+        },
+        "local_orig": {
+            "-": 99
+        },
+        "local_resp": {
+            "-": 99
+        },
+        "orig_pkts": {
+            "-": 99
+        },
+        "orig_ip_bytes": {
+            "-": 99
+        },
+        "resp_pkts": {
+            "-": 99
+        },
+        "resp_ip_bytes": {
+            "-": 99
+        },
+    },
+    "transform_to_numeric": [
+        "duration",
+        "orig_bytes",
+        "resp_bytes",
+        "missed_bytes",
+        "local_orig",
+        "local_resp",
+        "orig_pkts",
+        "orig_ip_bytes",
+        "resp_pkts",
+        "resp_ip_bytes"
+    ],
     "class_labels": {
-        0: 'Normal', 1: 'Fingerprinting', 
-        2: 'DDoS_ICMP', 3: 'Ransomware', 4: 'Port_Scanning', 
-        5: 'DDoS_UDP', 6: 'Uploading', 7: 'DDoS_HTTP', 
-        8: 'MITM', 9: 'Password', 10: 'XSS', 
-        11: 'SQL_injection', 12: 'DDoS_TCP', 
-        13: 'Vulnerability_scanner', 14: 'Backdoor',
+        0: "Benign",
+        1: "Att",
+        2: "C&C",
+        3: "C&C-FD",
+        4: "C&C-HB",
+        5: "C&C-HB-Att",
+        6: "C&C-HB-FD",
+        7: "C&C-Mirai",
+        8: "C&C-HPS",
+        9: "C&C-Torii",
+        10: "DDoS",
+        11: "FD",
+        12: "Okiru",
+        13: "Okiru-Att",
+        14: "HorizPortSc",
+        15: "HorizPortSc-Att",  
     },
     "category_encodings": {
-        "http.request.method": {
-            '0.0': 0,
-            '0': 0,
-            'GET': 1,
-            'POST': 2, 
-            'OPTIONS': 3, 
-            'TRACE': 4, 
-            0.0: 0,
+        "conn_state": {
+            "S0": 0,
+            "S1": 1,
+            "S2": 2,
+            "S3": 3,
+            "SF": 4,
+            "REJ": 5,
+            "RSTO": 6,
+            "RSTR": 7,
+            "RSTOS0": 8,
+            "RSTRH": 9,
+            "SH": 10,
+            "SHR": 11,
+            "OTH": 12
         },
-        "http.referer":{'0.0':0, 
-                        '0':0, 
-                        '127.0.0.1':1},
-        "http.request.full_uri":{'0.0': 0, 
-                                 '0': 0, 
-                                 'http://192.168.0.128/dvwa/vulnerabilities/': 1,
-                                'http://192.168.0.128/DVWA/login.php': 2},
-        "http.request.version":{'0.0':0, 
-                                '0':0, 
-                                'HTTP/1.1':1, 
-                                'HTTP/1.0':2},
-        "mqtt.conack.flags": {'0.0':0, 
-                              '0':0, 
-                              '0x00000000':1},
-        "mqtt.protoname": {'0.0':0, 
-                           '0':0, 
-                           'MQTT':1},
-        "mqtt.topic": {'0.0':0, 
-                       '0':0, 
-                       'Temperature_and_Humidity':1},
-        "Attack_type": {
-            'Normal': 0, 'Fingerprinting': 1, 
-            'DDoS_ICMP': 2, 'Ransomware': 3, 'Port_Scanning': 4, 
-            'DDoS_UDP': 5, 'Uploading': 6, 'DDoS_HTTP': 7, 
-            'MITM': 8, 'Password': 9, 'XSS': 10, 
-            'SQL_injection': 11, 'DDoS_TCP': 12, 
-            'Vulnerability_scanner': 13, 'Backdoor': 14, 
+        "detailed-label": {
+            "Benign": 0,
+            "Attack": 1,
+            "C&C": 2,
+            "C&C-FileDownload": 3,
+            "C&C-HeartBeat": 4,
+            "C&C-HeartBeat-Attack": 5,
+            "C&C-HeartBeat-FileDownload": 6,
+            "C&C-Mirai": 7,
+            "C&C-PartOfAHorizontalPortScan": 8,
+            "C&C-Torii": 9,
+            "DDoS": 10,
+            "FileDownload": 11,
+            "Okiru": 12,
+            "Okiru-Attack": 13,
+            "PartOfAHorizontalPortScan": 14,
+            "PartOfAHorizontalPortScan-Attack": 15,
         },
-        "Attack_label": {
-            0: 0,
-            1: 1,
+        "label": {
+            "benign": 0,
+            "Malicious": 1
+        },
+        "proto": {
+            "icmp": 0,
+            "tcp": 1,
+            "udp": 2
+        },
+        "service": {
+            "-": 0,
+            "dhcp": 1,
+            "dns": 2,
+            "http": 3,
+            "ssh": 4,
+            "ssl": 5,
+            "irc": 6
         },
     },
 }
 
 feature_selections = {
     # EXP_FL16_FT14_R_ / EXP_FL4_FT14_R_
-    # All numeric columns:
-    # along with 'http.request.method'
+    # All without:
+    # 'ts', 'uid', 'label', 'id.orig_h', 'local_orig',
+    # 'local_resp', 'missed_bytes',  'tunnel_parents'
     "F14": {
         "description": 'F14',
         "features": [
-            'arp.opcode', 'arp.hw.size', 'icmp.checksum', 
-                        'icmp.seq_le', 'icmp.transmit_timestamp', 
-                        'icmp.unused', 'http.content_length', 
-                        'http.response', 'http.tls_port', 'tcp.ack', 
-                        'tcp.ack_raw', 'tcp.checksum', 'tcp.connection.fin', 
-                        'tcp.connection.rst', 'tcp.connection.syn', 
-                        'tcp.connection.synack', 'tcp.dstport', 'tcp.flags', 
-                        'tcp.flags.ack', 'tcp.len', 'tcp.seq', 'udp.port', 
-                        'udp.stream', 'udp.time_delta', 'dns.qry.name', 
-                        'dns.qry.qu', 'dns.qry.type', 'dns.retransmission', 
-                        'dns.retransmit_request', 'dns.retransmit_request_in', 
-                        'mqtt.conflag.cleansess', 'mqtt.conflags', 
-                        'mqtt.hdrflags', 'mqtt.len', 'mqtt.msg_decoded_as', 
-                        'mqtt.msgtype', 'mqtt.proto_len', 'mqtt.topic_len', 
-                        'mqtt.ver', 'mbtcp.len', 'mbtcp.trans_id', 
-                        'mbtcp.unit_id', 'http.request.method' ,'http.request.version', 
-                        'http.request.full_uri',  'mqtt.protoname', 'mqtt.conack.flags',
+            'id.orig_p', 'id.resp_h', 'id.resp_p', 'proto',
+            'service', 'duration', 'orig_bytes', 'resp_bytes', 'conn_state',
+            'history', 'orig_pkts',
+            'orig_ip_bytes', 'resp_pkts', 'resp_ip_bytes',
+            'detailed-label'
         ]},
 
     # EXP_FL16_FT17_R_ / EXP_FL4_FT17_R_
     # All without:
-    # 
+    # 'ts', 'uid', 'label', 'id.orig_h', 'id.resp_h'
     "F17": {
         "description": 'F17',
         "features": [
-            'arp.opcode', 'arp.hw.size', 'icmp.checksum', 
-                        'icmp.seq_le', 'icmp.transmit_timestamp', 
-                        'icmp.unused', 'http.content_length', 'http.request.method',
-                        'http.response', 'http.tls_port', 'tcp.ack', 
-                        'tcp.ack_raw', 'tcp.checksum', 'tcp.connection.fin', 
-                        'tcp.connection.rst', 'tcp.connection.syn', 
-                        'tcp.connection.synack', 'tcp.dstport', 'tcp.flags', 
-                        'tcp.flags.ack', 'tcp.len', 'tcp.seq', 'udp.port', 
-                        'udp.stream', 'udp.time_delta', 'dns.qry.name', 
-                        'dns.qry.qu', 'dns.qry.type', 'dns.retransmission', 
-                        'dns.retransmit_request', 'dns.retransmit_request_in', 
-                        'mqtt.conflag.cleansess', 'mqtt.conflags', 
-                        'mqtt.hdrflags', 'mqtt.len', 'mqtt.msg_decoded_as', 
-                        'mqtt.msgtype', 'mqtt.proto_len', 'mqtt.topic_len', 
-                        'mqtt.ver', 'mbtcp.len', 'mbtcp.trans_id', 
-                        'mbtcp.unit_id', 'Attack_type',
+            'id.orig_p', 'id.resp_p', 'proto',
+            'service', 'duration', 'orig_bytes', 'resp_bytes', 'conn_state',
+            'local_orig', 'local_resp', 'missed_bytes', 'history', 'orig_pkts',
+            'orig_ip_bytes', 'resp_pkts', 'resp_ip_bytes', 'tunnel_parents',
+            'detailed-label'
         ]},
 
     # EXP_FL16_FT18_R_ / EXP_FL4_FT18_R_
     # All without:
-    # 
+    # 'ts', 'uid', 'label', 'id.orig_h'
     "F18": {
         "description": 'F18',
         "features": [
-            
+            'id.orig_p', 'id.resp_h', 'id.resp_p', 'proto',
+            'service', 'duration', 'orig_bytes', 'resp_bytes', 'conn_state',
+            'local_orig', 'local_resp', 'missed_bytes', 'history', 'orig_pkts',
+            'orig_ip_bytes', 'resp_pkts', 'resp_ip_bytes', 'tunnel_parents',
+            'detailed-label'
         ]},
 
     # All without:
-    # 
+    # 'ts', 'uid', 'label'
     "F19": {
         "description": 'F19',
         "features": [
-            
+            'id.orig_h', 'id.orig_p', 'id.resp_h', 'id.resp_p', 'proto',
+            'service', 'duration', 'orig_bytes', 'resp_bytes', 'conn_state',
+            'local_orig', 'local_resp', 'missed_bytes', 'history', 'orig_pkts',
+            'orig_ip_bytes', 'resp_pkts', 'resp_ip_bytes', 'tunnel_parents',
+            'detailed-label'
         ]},
 }
 
 datasets = {
     'S16': [],
     'S04': [
-        "Fingerprinting.csv",
-        "Password.csv",
-        "Backdoor.csv",
-        "Normal.csv", 
-        "XSS.csv",
+        "Benign.csv",
+        "Attack.csv",
+        "C&C.csv",
+        "PartOfAHorizontalPortScan.csv"
     ]
 }
 
