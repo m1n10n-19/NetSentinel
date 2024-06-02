@@ -1,149 +1,187 @@
-#DDoS_Botnet
+#EdgeIIoT
 
 import re
 
 
 data_metadata = {
     "file_name_pattern": "*.csv",
-    "file_header": "pkSeqID,stime,flgs,flgs_number,proto,proto_number,saddr,sport,"
-                    "daddr,dport,pkts,bytes,state,state_number,ltime,seq,dur,mean,"
-                    "stddev,sum,min,max,spkts,dpkts,sbytes,dbytes,rate,srate,drate,"
-                    "TnBPSrcIP,TnBPDstIP,TnP_PSrcIP,TnP_PDstIP,TnP_PerProto,"
-                    "TnP_Per_Dport,AR_P_Proto_P_SrcIP,AR_P_Proto_P_DstIP,"
-                    "N_IN_Conn_P_DstIP,N_IN_Conn_P_SrcIP,AR_P_Proto_P_Sport,"
-                    "AR_P_Proto_P_Dport,Pkts_P_State_P_Protocol_P_DestIP,"
-                    "Pkts_P_State_P_Protocol_P_SrcIP,attack,category,subcategory",
-    "all_columns": ['pkSeqID', 'stime', 'flgs', 'flgs_number', 'proto', 'proto_number', 
-                    'saddr', 'sport', 'daddr', 'dport', 'pkts', 'bytes', 'state', 
-                    'state_number', 'ltime', 'seq', 'dur', 'mean', 'stddev', 'sum', 
-                    'min', 'max', 'spkts', 'dpkts', 'sbytes', 'dbytes', 'rate', 'srate', 
-                    'drate', 'TnBPSrcIP', 'TnBPDstIP', 'TnP_PSrcIP', 'TnP_PDstIP', 
-                    'TnP_PerProto', 'TnP_Per_Dport', 'AR_P_Proto_P_SrcIP', 'AR_P_Proto_P_DstIP', 
-                    'N_IN_Conn_P_DstIP', 'N_IN_Conn_P_SrcIP', 'AR_P_Proto_P_Sport', 
-                    'AR_P_Proto_P_Dport', 'Pkts_P_State_P_Protocol_P_DestIP', 
-                    'Pkts_P_State_P_Protocol_P_SrcIP', 'attack', 'category', 'subcategory'],
-        
-    "numeric_columns": ['pkSeqID', 'stime', 'flgs_number', 'proto_number', 
-                        'pkts', 'bytes', 'state_number', 'ltime', 'seq', 
-                        'dur', 'mean', 'stddev', 'sum', 'min', 'max', 
-                        'spkts', 'dpkts', 'sbytes', 'dbytes', 'rate', 
-                        'srate', 'drate', 'TnBPSrcIP', 'TnBPDstIP', 
-                        'TnP_PSrcIP', 'TnP_PDstIP', 'TnP_PerProto', 
-                        'TnP_Per_Dport', 'AR_P_Proto_P_SrcIP', 
-                        'AR_P_Proto_P_DstIP', 'N_IN_Conn_P_DstIP', 
-                        'N_IN_Conn_P_SrcIP', 'AR_P_Proto_P_Sport', 
-                        'AR_P_Proto_P_Dport', 'Pkts_P_State_P_Protocol_P_DestIP', 
-                        'Pkts_P_State_P_Protocol_P_SrcIP', 'attack',],
+    "file_header": "frame.time,ip.src_host,ip.dst_host,arp.dst.proto_ipv4,arp.opcode,arp.hw.size,"
+    "arp.src.proto_ipv4,icmp.checksum,icmp.seq_le,icmp.transmit_timestamp,icmp.unused,"
+    "http.file_data,http.content_length,http.request.uri.query,http.request.method,http.referer,"
+    "http.request.full_uri,http.request.version,http.response,http.tls_port,tcp.ack,tcp.ack_raw,"
+    "tcp.checksum,tcp.connection.fin,tcp.connection.rst,tcp.connection.syn,tcp.connection.synack,"
+    "tcp.dstport,tcp.flags,tcp.flags.ack,tcp.len,tcp.options,tcp.payload,tcp.seq,tcp.srcport,"
+    "udp.port,udp.stream,udp.time_delta,dns.qry.name,dns.qry.name.len,dns.qry.qu,dns.qry.type,"
+    "dns.retransmission,dns.retransmit_request,dns.retransmit_request_in,mqtt.conack.flags,"
+    "mqtt.conflag.cleansess,mqtt.conflags,mqtt.hdrflags,mqtt.len,mqtt.msg_decoded_as,mqtt.msg,"
+    "mqtt.msgtype,mqtt.proto_len,mqtt.protoname,mqtt.topic,mqtt.topic_len,mqtt.ver,mbtcp.len,"
+    "mbtcp.trans_id,mbtcp.unit_id,Attack_label,Attack_type",
 
-    "column_index": 45,
-    "sep": ",",
+    "all_columns": ['frame.time', 'ip.src_host', 'ip.dst_host', 'arp.dst.proto_ipv4', 
+                    'arp.opcode', 'arp.hw.size', 'arp.src.proto_ipv4', 'icmp.checksum', 
+                    'icmp.seq_le', 'icmp.transmit_timestamp', 'icmp.unused', 
+                    'http.file_data', 'http.content_length', 'http.request.uri.query', 
+                    'http.request.method', 'http.referer', 'http.request.full_uri', 
+                    'http.request.version', 'http.response', 'http.tls_port', 
+                    'tcp.ack', 'tcp.ack_raw', 'tcp.checksum', 'tcp.connection.fin', 
+                    'tcp.connection.rst', 'tcp.connection.syn', 'tcp.connection.synack', 
+                    'tcp.dstport', 'tcp.flags', 'tcp.flags.ack', 'tcp.len', 
+                    'tcp.options', 'tcp.payload', 'tcp.seq', 'tcp.srcport', 
+                    'udp.port', 'udp.stream', 'udp.time_delta', 'dns.qry.name', 
+                    'dns.qry.name.len', 'dns.qry.qu', 'dns.qry.type', 
+                    'dns.retransmission', 'dns.retransmit_request', 
+                    'dns.retransmit_request_in', 'mqtt.conack.flags', 
+                    'mqtt.conflag.cleansess', 'mqtt.conflags', 'mqtt.hdrflags', 
+                    'mqtt.len', 'mqtt.msg_decoded_as', 'mqtt.msg', 'mqtt.msgtype', 
+                    'mqtt.proto_len', 'mqtt.protoname', 'mqtt.topic', 'mqtt.topic_len', 
+                    'mqtt.ver', 'mbtcp.len', 'mbtcp.trans_id', 'mbtcp.unit_id', 
+                    'Attack_label', 'Attack_type'],
+    "numeric_columns": ['arp.opcode', 'arp.hw.size', 'icmp.checksum', 
+                        'icmp.seq_le', 'icmp.transmit_timestamp', 
+                        'icmp.unused', 'http.content_length', 
+                        'http.response', 'http.tls_port', 'tcp.ack', 
+                        'tcp.ack_raw', 'tcp.checksum', 'tcp.connection.fin', 
+                        'tcp.connection.rst', 'tcp.connection.syn', 
+                        'tcp.connection.synack', 'tcp.dstport', 'tcp.flags', 
+                        'tcp.flags.ack', 'tcp.len', 'tcp.seq', 'udp.port', 
+                        'udp.stream', 'udp.time_delta', 'dns.qry.name', 
+                        'dns.qry.qu', 'dns.qry.type', 'dns.retransmission', 
+                        'dns.retransmit_request', 'dns.retransmit_request_in', 
+                        'mqtt.conflag.cleansess', 'mqtt.conflags', 
+                        'mqtt.hdrflags', 'mqtt.len', 'mqtt.msg_decoded_as', 
+                        'mqtt.msgtype', 'mqtt.proto_len', 'mqtt.topic_len', 
+                        'mqtt.ver', 'mbtcp.len', 'mbtcp.trans_id', 
+                        'mbtcp.unit_id', 'Attack_label'],
+
+    "column_index": 62, #column index of attack_type
+    "sep": ',', #seperater for csv
 }
 
 data_cleanup = {
-    "classification_col": "subcategory",
-    "drop_cols": ['pkSeqID', 'category', 'attack'],
+    "classification_col": "Attack_type",
+    "drop_cols": ['Attack_label', 'frame.time', 'http.file_data', 'mqtt.msg', 'dns.qry.name.len',], #columns (11,51,39) have mixed types and non categorical
     "replace_values": {},
-    "replace_values_in_col": {
-    },
-    "transform_to_numeric": [
-        'pkSeqID', 'stime', 'flgs_number', 'proto_number', 
-                        'pkts', 'bytes', 'state_number', 'ltime', 'seq', 
-                        'dur', 'mean', 'stddev', 'sum', 'min', 'max', 
-                        'spkts', 'dpkts', 'sbytes', 'dbytes', 'rate', 
-                        'srate', 'drate', 'TnBPSrcIP', 'TnBPDstIP', 
-                        'TnP_PSrcIP', 'TnP_PDstIP', 'TnP_PerProto', 
-                        'TnP_Per_Dport', 'AR_P_Proto_P_SrcIP', 
-                        'AR_P_Proto_P_DstIP', 'N_IN_Conn_P_DstIP', 
-                        'N_IN_Conn_P_SrcIP', 'AR_P_Proto_P_Sport', 
-                        'AR_P_Proto_P_Dport', 'Pkts_P_State_P_Protocol_P_DestIP', 
-                        'Pkts_P_State_P_Protocol_P_SrcIP', 'attack',
-    ],
+    "replace_values_in_col": {},
+    "transform_to_numeric": ['arp.opcode', 'arp.hw.size', 'icmp.checksum', 
+                'icmp.seq_le', 'icmp.transmit_timestamp', 
+                'icmp.unused', 'http.content_length', 
+                'http.response', 'http.tls_port', 'tcp.ack', 
+                'tcp.ack_raw', 'tcp.checksum', 'tcp.connection.fin', 
+                'tcp.connection.rst', 'tcp.connection.syn', 
+                'tcp.connection.synack', 'tcp.dstport', 'tcp.flags', 
+                'tcp.flags.ack', 'tcp.len', 'tcp.seq', 'udp.port', 
+                'udp.stream', 'udp.time_delta', 'dns.qry.name', 
+                'dns.qry.qu', 'dns.qry.type', 'dns.retransmission', 
+                'dns.retransmit_request', 'dns.retransmit_request_in', 
+                'mqtt.conflag.cleansess', 'mqtt.conflags', 
+                'mqtt.hdrflags', 'mqtt.len', 'mqtt.msg_decoded_as', 
+                'mqtt.msgtype', 'mqtt.proto_len', 'mqtt.topic_len', 
+                'mqtt.ver', 'mbtcp.len', 'mbtcp.trans_id', 
+                'mbtcp.unit_id', 'Attack_label'],
+
     "class_labels": {
-        3: "HTTP",
-        1: "TCP",
-        2: "UDP",
-        0: "Normal" 
+        0: 'Normal', 1: 'Fingerprinting', 
+        2: 'DDoS_ICMP', 3: 'Ransomware', 4: 'Port_Scanning', 
+        5: 'DDoS_UDP', 6: 'Uploading', 7: 'DDoS_HTTP', 
+        8: 'MITM', 9: 'Password', 10: 'XSS', 
+        11: 'SQL_injection', 12: 'DDoS_TCP', 
+        13: 'Vulnerability_scanner', 14: 'Backdoor',
     },
     "category_encodings": {
-        "flgs": {
-        "e": 0,
-        "e s": 1,
-        "e *": 2,
-        "e d": 3,
-        "e g": 4,
-        "eU": 5,
-        "e &": 6
+        "http.request.method": {
+            '0.0': 0,
+            '0': 0,
+            'GET': 1,
+            'POST': 2, 
+            'OPTIONS': 3, 
+            'TRACE': 4, 
+            0.0: 0,
         },
-        "proto": {
-        "tcp": 0,
-        "arp": 1,
-        "udp": 2,
-        "icmp": 3,
-        "ipv6-icmp": 4
+        "http.referer":{'0.0':0, 
+                        '0':0, 
+                        '127.0.0.1':1},
+        "http.request.full_uri":{'0.0': 0, 
+                                 '0': 0, 
+                                 'http://192.168.0.128/dvwa/vulnerabilities/': 1,
+                                'http://192.168.0.128/DVWA/login.php': 2},
+        "http.request.version":{'0.0':0, 
+                                '0':0, 
+                                'HTTP/1.1':1, 
+                                'HTTP/1.0':2},
+        "mqtt.conack.flags": {'0.0':0, 
+                              '0':0, 
+                              '0x00000000':1},
+        "mqtt.protoname": {'0.0':0, 
+                           '0':0, 
+                           'MQTT':1},
+        "mqtt.topic": {'0.0':0, 
+                       '0':0, 
+                       'Temperature_and_Humidity':1},
+        "Attack_type": {
+            'Normal': 0, 'Fingerprinting': 1, 
+            'DDoS_ICMP': 2, 'Ransomware': 3, 'Port_Scanning': 4, 
+            'DDoS_UDP': 5, 'Uploading': 6, 'DDoS_HTTP': 7, 
+            'MITM': 8, 'Password': 9, 'XSS': 10, 
+            'SQL_injection': 11, 'DDoS_TCP': 12, 
+            'Vulnerability_scanner': 13, 'Backdoor': 14, 
         },
-        "state": {
-        "RST": 0,
-        "CON": 1,
-        "FIN": 2,
-        "REQ": 3,
-        "ACC": 4,
-        "INT": 5,
-        "URP": 6,
-        "NRS": 7
-        },
-        "subcategory": {
-        "HTTP": 3,
-        "TCP": 1,
-        "UDP": 2,
-        "Normal": 0
+        "Attack_label": {
+            0: 0,
+            1: 1,
         },
     },
 }
 
 feature_selections = {
     # EXP_FL16_FT14_R_ / EXP_FL4_FT14_R_
-    # All without:
-    # 'ts', 'uid', 'label', 'id.orig_h', 'local_orig',
-    # 'local_resp', 'missed_bytes',  'tunnel_parents'
+    # All numeric columns:
+    # along with 'http.request.method'
     "F14": {
         "description": 'F14',
-        "features": ['saddr', 'daddr', 'dport', 'pkts', 'bytes', 'state', 
-                    'seq', 'dur', 'mean', 'stddev', 'sum', 
-                    'min', 'max', 'spkts', 'dpkts', 'sbytes', 'dbytes', 'rate', 'srate', 
-                    'drate',
+        "features": ['arp.opcode', 'arp.hw.size', 'icmp.seq_le', 
+                'icmp.unused', 'http.content_length', 
+                'tcp.ack', 'tcp.connection.fin', 
+                'tcp.connection.synack', 'tcp.dstport',
+                'tcp.flags.ack', 'tcp.len', 'tcp.seq', 'udp.port', 
+                'udp.stream', 'udp.time_delta',
+                'dns.qry.qu', 'dns.retransmission',  
+                'mqtt.hdrflags', 'mqtt.len','mqtt.proto_len', 
+                'mqtt.topic_len', 'mbtcp.len', 'mbtcp.trans_id', 
+                'mbtcp.unit_id',
         ]},
 
     # EXP_FL16_FT17_R_ / EXP_FL4_FT17_R_
     # All without:
-    # 'ts', 'uid', 'label', 'id.orig_h', 'id.resp_h'
+    # 
     "F17": {
         "description": 'F17',
-        "features": [
-        ]},
+        "features": []},
 
     # EXP_FL16_FT18_R_ / EXP_FL4_FT18_R_
     # All without:
-    # 'ts', 'uid', 'label', 'id.orig_h'
+    # 
     "F18": {
         "description": 'F18',
         "features": [
+            
         ]},
 
     # All without:
-    # 'ts', 'uid', 'label'
+    # 
     "F19": {
         "description": 'F19',
         "features": [
+            
         ]},
 }
 
 datasets = {
     'S16': [],
     'S04': [
-        "HTTP.csv",
-        "TCP.csv",
-        "Normal.csv",
-        "UDP.csv"
+        "DDoS_HTTP.csv",
+        "DDoS_TCP.csv",
+        "Backdoor.csv",
+        "Normal.csv", 
     ]
 }
 

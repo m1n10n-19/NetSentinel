@@ -138,24 +138,16 @@ feature_selections = {
     # along with 'http.request.method'
     "F14": {
         "description": 'F14',
-        "features": [
-            'arp.opcode', 'arp.hw.size', 'icmp.checksum', 
-                        'icmp.seq_le', 'icmp.transmit_timestamp', 
-                        'icmp.unused', 'http.content_length', 
-                        'http.response', 'http.tls_port', 'tcp.ack', 
-                        'tcp.ack_raw', 'tcp.checksum', 'tcp.connection.fin', 
-                        'tcp.connection.rst', 'tcp.connection.syn', 
-                        'tcp.connection.synack', 'tcp.dstport', 'tcp.flags', 
-                        'tcp.flags.ack', 'tcp.len', 'tcp.seq', 'udp.port', 
-                        'udp.stream', 'udp.time_delta', 'dns.qry.name', 
-                        'dns.qry.qu', 'dns.qry.type', 'dns.retransmission', 
-                        'dns.retransmit_request', 'dns.retransmit_request_in', 
-                        'mqtt.conflag.cleansess', 'mqtt.conflags', 
-                        'mqtt.hdrflags', 'mqtt.len', 'mqtt.msg_decoded_as', 
-                        'mqtt.msgtype', 'mqtt.proto_len', 'mqtt.topic_len', 
-                        'mqtt.ver', 'mbtcp.len', 'mbtcp.trans_id', 
-                        'mbtcp.unit_id', 'http.request.method' ,'http.request.version', 
-                        'http.request.full_uri',  'mqtt.protoname', 'mqtt.conack.flags',
+        "features": ['arp.opcode', 'arp.hw.size', 'icmp.seq_le', 
+                'icmp.unused', 'http.content_length', 
+                'tcp.ack', 'tcp.connection.fin', 
+                'tcp.connection.synack', 'tcp.dstport',
+                'tcp.flags.ack', 'tcp.len', 'tcp.seq', 'udp.port', 
+                'udp.stream', 'udp.time_delta',
+                'dns.qry.qu', 'dns.retransmission',  
+                'mqtt.hdrflags', 'mqtt.len','mqtt.proto_len', 
+                'mqtt.topic_len', 'mbtcp.len', 'mbtcp.trans_id', 
+                'mbtcp.unit_id',
         ]},
 
     # EXP_FL16_FT17_R_ / EXP_FL4_FT17_R_
@@ -163,24 +155,7 @@ feature_selections = {
     # 
     "F17": {
         "description": 'F17',
-        "features": [
-            'arp.opcode', 'arp.hw.size', 'icmp.checksum', 
-                        'icmp.seq_le', 'icmp.transmit_timestamp', 
-                        'icmp.unused', 'http.content_length', 'http.request.method',
-                        'http.response', 'http.tls_port', 'tcp.ack', 
-                        'tcp.ack_raw', 'tcp.checksum', 'tcp.connection.fin', 
-                        'tcp.connection.rst', 'tcp.connection.syn', 
-                        'tcp.connection.synack', 'tcp.dstport', 'tcp.flags', 
-                        'tcp.flags.ack', 'tcp.len', 'tcp.seq', 'udp.port', 
-                        'udp.stream', 'udp.time_delta', 'dns.qry.name', 
-                        'dns.qry.qu', 'dns.qry.type', 'dns.retransmission', 
-                        'dns.retransmit_request', 'dns.retransmit_request_in', 
-                        'mqtt.conflag.cleansess', 'mqtt.conflags', 
-                        'mqtt.hdrflags', 'mqtt.len', 'mqtt.msg_decoded_as', 
-                        'mqtt.msgtype', 'mqtt.proto_len', 'mqtt.topic_len', 
-                        'mqtt.ver', 'mbtcp.len', 'mbtcp.trans_id', 
-                        'mbtcp.unit_id', 'Attack_type',
-        ]},
+        "features": []},
 
     # EXP_FL16_FT18_R_ / EXP_FL4_FT18_R_
     # All without:
@@ -203,11 +178,10 @@ feature_selections = {
 datasets = {
     'S16': [],
     'S04': [
-        "Fingerprinting.csv",
-        "Password.csv",
+        "DDoS_HTTP.csv",
+        "DDoS_TCP.csv",
         "Backdoor.csv",
         "Normal.csv", 
-        "XSS.csv",
     ]
 }
 
